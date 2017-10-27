@@ -1,7 +1,7 @@
 """
 This is a tutoral, and it is downloaded from https://github.com/LouisScorpio/datamining/tree/master/tensorflow-program/rnn/stock_predict
 I made some changes in order to predict on the history predictions, not the test_dataset. While the result is not very good. Further modifies
-will be make.
+will be made.
 
 This code just for learning the RNN, I declare no copyright of this code, and the copyright belongs to the github user: LouisScorpio.
 
