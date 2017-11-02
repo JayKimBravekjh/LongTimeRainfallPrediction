@@ -1,3 +1,15 @@
+"""
+This is a tutoral, and it is downloaded from https://github.com/LouisScorpio/datamining/tree/master/tensorflow-program/rnn/stock_predict
+I made some changes in order to predict on the history predictions, not the test_dataset. While the result is not very good. Further modifies
+will be made.
+
+This code just for learning the RNN, I declare no copyright of this code, and the copyright belongs to the github user: LouisScorpio.
+
+If I violate your copyright, please contact me at liu.sy.chn@hotmail.com And I will delete this file in time.
+"""
+# In the project of N-D input, we can not use the same method, cause we can not predict the other factors which are the input data.
+# It means we can not like the 1-D input to predict anymore. Step-by-step prediction is impossible.
+# A way to solve this problem is to predic 1 time_step. We can change the prediction of the time-length by changing the length of the input.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
