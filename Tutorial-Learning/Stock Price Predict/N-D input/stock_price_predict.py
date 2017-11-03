@@ -20,6 +20,7 @@ rnn_unit=10
 input_size=7
 output_size=1
 lr=0.0006         
+layer_num=2
 
 f=open('./dataset/dataset_2.csv') 
 df=pd.read_csv(f)    
@@ -83,8 +84,9 @@ def lstm(X):
     input_rnn=tf.matmul(input,w_in)+b_in
     input_rnn=tf.reshape(input_rnn,[-1,time_step,rnn_unit])  
     cell=tf.contrib.rnn.BasicLSTMCell(rnn_unit,reuse=tf.get_variable_scope().reuse)
-    init_state=cell.zero_state(batch_size,dtype=tf.float32)
-    output_rnn,final_states=tf.nn.dynamic_rnn(cell, input_rnn,initial_state=init_state, dtype=tf.float32)  
+    multi_cell=tf.contrib.rnn.MultiRNNCell([cell for _ in range(layer_num)], state_is_tuple=True)
+    init_state=multi_cell.zero_state(batch_size,dtype=tf.float32)
+    output_rnn,final_states=tf.nn.dynamic_rnn(multi_cell, input_rnn,initial_state=init_state, dtype=tf.float32)  
     output=tf.reshape(output_rnn,[-1,rnn_unit]) 
     w_out=weights['out']
     b_out=biases['out']
@@ -130,7 +132,6 @@ def prediction(time_step=20):
         module_file = tf.train.latest_checkpoint(base_path)
         saver.restore(sess, module_file) 
         test_predict=[]
-        #for step in range(len(test_x)-1):
         prob=sess.run(pred,feed_dict={X:[test_x[0]]})   
         predict=prob.reshape((-1))
         test_predict.extend(predict)
