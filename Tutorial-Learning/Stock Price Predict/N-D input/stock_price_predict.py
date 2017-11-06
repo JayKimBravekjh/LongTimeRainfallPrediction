@@ -28,17 +28,17 @@ data=df.iloc[:,2:10].values
 base_path = "Your Path" 
 
 
-def get_train_data(batch_size=60,time_step=20,train_dataset_begin=0,train_dataset_end=6069):
+def get_train_data(batch_size=60,time_step=90,train_dataset_begin=0,train_dataset_end=5931):
     batch_index=[]
     data_train=data[train_dataset_begin:train_dataset_end]
     normalized_train_data=(data_train-np.mean(data_train,axis=0))/np.std(data_train,axis=0)
     print np.shape(normalized_train_data)  
     train_x,train_y=[],[]   
-    for i in range(len(normalized_train_data)-time_step):
+    for i in range(len(normalized_train_data)-2*time_step):
        if i % batch_size==0:
            batch_index.append(i)
        x=normalized_train_data[i:i+time_step,:7]
-       y=normalized_train_data[i:i+time_step,7,np.newaxis]
+       y=normalized_train_data[i+time_step:i+2*time_step,7,np.newaxis]
        train_x.append(x.tolist())
        train_y.append(y.tolist())
     batch_index.append((len(normalized_train_data)-time_step))
@@ -47,7 +47,7 @@ def get_train_data(batch_size=60,time_step=20,train_dataset_begin=0,train_datase
 
 
 
-def get_test_data(time_step=20,test_begin=6069):
+def get_test_data(time_step=20,test_begin=5931):
     data_test=data[test_begin:]
     mean=np.mean(data_test,axis=0)
     std=np.std(data_test,axis=0)
@@ -56,7 +56,7 @@ def get_test_data(time_step=20,test_begin=6069):
     test_x,test_y=[],[]
   
     x=normalized_test_data[0:time_step,:7]
-    y=normalized_test_data[0:time_step,7]
+    y=normalized_test_data[90:90+time_step,7]
     test_x.append(x.tolist())
     test_y.extend(y)
     #test_x.append((normalized_test_data[(i+1)*time_step:,:7]).tolist())
@@ -96,7 +96,7 @@ def lstm(X):
 
 
 
-def train_lstm(batch_size=80,time_step=20,train_begin=0,train_end=6069):
+def train_lstm(batch_size=80,time_step=90,train_begin=0,train_end=5931):
     X=tf.placeholder(tf.float32, shape=[None,time_step,input_size])
     Y=tf.placeholder(tf.float32, shape=[None,time_step,output_size])
     batch_index,train_x,train_y=get_train_data(batch_size,time_step,train_begin,train_end)
@@ -120,7 +120,7 @@ def train_lstm(batch_size=80,time_step=20,train_begin=0,train_end=6069):
 
 train_lstm()
 
-def prediction(time_step=20):
+def prediction(time_step=90):
     X=tf.placeholder(tf.float32, shape=[None,time_step,input_size])
     
     mean,std,test_x,test_y=get_test_data(time_step)
@@ -137,7 +137,7 @@ def prediction(time_step=20):
         test_predict.extend(predict)
         test_y=np.array(test_y)*std[7]+mean[7]
         test_predict=np.array(test_predict)*std[7]+mean[7]
-        acc=np.average(np.abs(test_predict-test_y[:len(test_predict)])/test_y[:len(test_predict)])  
+        #acc=np.average(np.abs(test_predict-test_y[:len(test_predict)])/test_y[:len(test_predict)])  
         print test_predict
         plt.figure()
         plt.plot(list(range(len(test_predict))), test_predict, color='b')
