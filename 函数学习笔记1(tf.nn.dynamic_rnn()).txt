@@ -1,0 +1,10 @@
+tf.nn.dynamic_rnn()函数在使用过程中，遇到了一些问题：
+  1.其返回值的具体含义
+  2.如何使用其返回的final_state
+
+ 首先明确，此函数的返回值分为两部分，可表示为:
+          output, final_states = tf.nn.dynamic_rnn(cell, input, initial_state=init_state, dtype=tf.float32)
+  其中，output为与输入input相同的输出，为[batch_size, time_step, rnn_unit]，即每个time_step下的每个LSTM单元的输出状态都会得到保存。如果我们需要
+一个或多个time_step长度的输出，取出最后一个时间步下的每一个rnn_unit的输出即可。如果我们只预测一个值，那么就只需取出最后一个时间步下最后一个LSTM单元
+的输出。
+
